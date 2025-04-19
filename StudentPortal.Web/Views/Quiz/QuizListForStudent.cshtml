@@ -1,0 +1,25 @@
+﻿@model IEnumerable<QuizViewModel>
+
+<h2>Available Quizzes</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var quiz in Model)
+        {
+            <tr>
+                <td>@quiz.Title</td>
+                <td>@quiz.Description</td>
+                <td>
+                    <a asp-action="TakeQuiz" asp-route-quizId="@quiz.QuizId" class="btn btn-success submit-btn" style="background-color:purple"><i class="bi bi-vector-pen"></i> Take Quiz</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

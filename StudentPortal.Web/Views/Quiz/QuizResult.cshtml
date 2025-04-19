@@ -1,0 +1,50 @@
+﻿
+
+@* @model StudentPortal.Web.Models.QuizResultViewModel *@
+
+@* <h2>Quiz Results for @Model.QuizTitle</h2> *@
+
+@* <p>Total Questions: @Model.TotalQuestions</p> *@
+@* <p>Correct Answers: @Model.CorrectAnswers</p> *@
+@* <p>Score: @Model.Score%</p> *@
+
+@* <a asp-controller="Home" asp-action="Index">Return to Home</a> *@
+
+
+
+@model StudentPortal.Web.Models.QuizResultViewModel
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-success text-white text-center">
+            <h2 class="mb-0">Quiz Result</h2>
+        </div>
+        <div class="card-body text-center">
+            <h4 class="mb-3 text-primary">@Model.QuizTitle</h4>
+
+            <div class="result-stats">
+                <p class="fs-5"><i class="bi bi-card-list"></i> Total Questions: <strong>@Model.TotalQuestions</strong></p>
+                <p class="fs-5 text-success"><i class="bi bi-check-square-fill"></i> Correct Answers: <strong>@Model.CorrectAnswers</strong></p>
+                <p class="fs-5 text-danger"><i class="bi bi-award-fill"></i> Score: <strong>@Model.Score%</strong></p>
+            </div>
+
+            <div class="progress my-4" style="height: 20px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: @Model.Score%;"
+                     aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
+                    @Model.Score%
+                </div>
+            </div>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+                <i class="fas fa-home"></i> Return to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .result-stats p {
+        margin: 10px 0;
+    }
+</style>
+

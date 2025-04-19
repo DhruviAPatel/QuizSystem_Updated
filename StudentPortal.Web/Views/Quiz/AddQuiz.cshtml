@@ -1,0 +1,12 @@
+﻿@model QuizViewModel
+
+<form method="post" asp-action="AddQuiz" class="form-group">
+    <label>Title</label>
+    <input type="text" name="Title" class="form-control" required />
+
+    <label>Description</label>
+    <textarea name="Description" class="form-control" required></textarea>
+
+    <button type="submit" class="btn btn-primary mt-3">Add Quiz</button>
+</form>
+

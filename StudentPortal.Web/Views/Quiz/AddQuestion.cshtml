@@ -1,0 +1,107 @@
+﻿@model StudentPortal.Web.Models.QuestionViewModel
+
+<h2>Add Question to Quiz</h2>
+<form asp-action="AddQuestion" method="post">
+    <input type="hidden" name="QuizId" value="@Model.QuizId" />
+    <div class="mb-3">
+        <label for="QuestionText" class="form-label">Question</label>
+        <input type="text" class="form-control" id="QuestionText" name="QuestionText" required />
+    </div>
+    <div class="mb-3">
+        <label for="QuestionType" class="form-label fw-bold">Question Type</label>
+        <select class="form-select" id="QuestionType" name="QuestionType" required onchange="toggleQuestionFields()">
+            <option value="MCQ">Multiple Choice (MCQ)</option>
+            <option value="Subjective">Subjective</option>
+            <option value="Numerical">Numerical</option>
+        </select>
+    </div>
+    <div id="mcq-options">
+    <div class="mb-3">
+        <label for="OptionA" class="form-label">Option A</label>
+        <input type="text" class="form-control" id="OptionA" name="OptionA"/>
+    </div>
+    <div class="mb-3">
+        <label for="OptionB" class="form-label">Option B</label>
+        <input type="text" class="form-control" id="OptionB" name="OptionB"/>
+    </div>
+    <div class="mb-3">
+        <label for="OptionC" class="form-label">Option C</label>
+        <input type="text" class="form-control" id="OptionC" name="OptionC"/>
+    </div>
+    <div class="mb-3">
+        <label for="OptionD" class="form-label">Option D</label>
+        <input type="text" class="form-control" id="OptionD" name="OptionD"/>
+    </div>
+    </div>
+
+    @* <div class="mb-3"> *@
+    @*     <label for="CorrectOption" class="form-label">Correct Option (A/B/C/D)</label> *@
+    @*     <input type="text" class="form-control" id="CorrectOption" name="CorrectOption" required /> *@
+    @* </div> *@
+    <div class="mb-3" id="correct-answer">
+        <label for="CorrectOption" id="correctAnswerLabel" class="form-label">Correct Option (A/B/C/D)</label>
+        <input type="text" class="form-control" id="CorrectOption" name="CorrectOption" required />
+    </div>
+
+    @* <div id="numerical-range" class="mb-3" style="display: none;"> *@
+    @*     <label class="form-label">Acceptable Range (Numerical)</label> *@
+    @*     <div class="input-group"> *@
+    @*         <input type="number" step="any" asp-for="MinAcceptableValue" placeholder="Min" class="form-control" /> *@
+    @*         <input type="number" step="any" asp-for="MaxAcceptableValue" placeholder="Max" class="form-control" /> *@
+    @*     </div> *@
+    @* </div> *@
+    <div id="numerical-range" class="mb-3">
+        <label class="form-label">Acceptable Range (Numerical)</label>
+        <div class="input-group">
+            <input type="number" step="any" asp-for="MinAcceptableValue" placeholder="Min" class="form-control" />
+            <input type="number" step="any" asp-for="MaxAcceptableValue" placeholder="Max" class="form-control" />
+        </div>
+        <span asp-validation-for="MinAcceptableValue" class="text-danger"></span>
+        <span asp-validation-for="MaxAcceptableValue" class="text-danger"></span>
+    </div>
+
+    <button type="submit" name="action" value="Add Another" class="btn btn-primary">Add Another</button>
+    <button type="submit" name="action" value="Finish" class="btn btn-success">Finish</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // function toggleQuestionFields() {
+        //     const type = document.getElementById("QuestionType").value;
+
+        //     document.getElementById("mcq-options").style.display = (type === "MCQ") ? "block" : "none";
+        //     document.getElementById("numerical-range").style.display = (type === "Numerical") ? "block" : "none";
+        //     document.getElementById("correct-answer").style.display = (type !== "Numerical") ? "block" : "none";
+
+        //     Change label text dynamically based on question type
+        //     const label = document.getElementById("correctAnswerLabel");
+        //     if (type === "MCQ") {
+        //         label.textContent = "Correct Option (A/B/C/D)";
+        //     } else if (type === "Subjective") {
+        //         label.textContent = "Correct Answer Text";
+        //     }
+        // }
+        function toggleQuestionFields() {
+            const type = document.getElementById("QuestionType").value;
+            console.log("Selected Type:", type);
+
+            document.getElementById("mcq-options").style.display = (type === "MCQ") ? "block" : "none";
+            document.getElementById("numerical-range").style.display = (type === "Numerical") ? "block" : "none";
+            document.getElementById("correct-answer").style.display = (type !== "Numerical") ? "block" : "none";
+
+            const label = document.getElementById("correctAnswerLabel");
+            if (label) {
+                if (type === "MCQ") {
+                    label.textContent = "Correct Option (A/B/C/D)";
+                } else if (type === "Subjective") {
+                    label.textContent = "Correct Answer Text";
+                }
+            }
+                
+        }
+
+
+        window.onload = toggleQuestionFields;
+    </script>
+}

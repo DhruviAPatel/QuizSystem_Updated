@@ -1,0 +1,33 @@
+﻿@model List<QuizResultViewModel>
+
+<h2>Quiz Results</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Score</th>
+            <th>Taken Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var result in Model)
+            {
+                <tr>
+                    <td>@result.StudentId</td>
+                    <td>@result.Score</td>
+                    <td>@result.TakenDate.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No results available.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,119 @@
+﻿
+
+@model StudentPortal.Web.Models.QuizViewModel
+
+@{
+    ViewData["Title"] = "Take Quiz";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h2 class="text-center">@Model.Title</h2>
+            <p class="text-center">@Model.Description</p>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="SubmitQuiz" asp-controller="Quiz" id="quizForm">
+                <input type="hidden" name="QuizId" value="@Model.QuizId" />
+
+                @for (int i = 0; i < Model.Questions.Count; i++)
+                {
+                    var question = Model.Questions[i];
+
+                    <div class="question-container" id="question-@i" style="display: @(i == 0 ? "block" : "none");">
+                        <h4 class="mb-3">@question.QuestionText</h4>
+                        <input type="hidden" name="UserAnswers[@i].QuestionId" value="@question.QuestionId" />
+
+                        @* <div class="form-check"> *@
+                        @*     <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="A" id="q-@i-a" /> *@
+                        @*     <label class="form-check-label" for="q-@i-a">A. @question.OptionA</label> *@
+                        @* </div> *@
+
+                        @* <div class="form-check"> *@
+                        @*     <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="B" id="q-@i-b" /> *@
+                        @*     <label class="form-check-label" for="q-@i-b">B. @question.OptionB</label> *@
+                        @* </div> *@
+
+                        @* <div class="form-check"> *@
+                        @*     <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="C" id="q-@i-c" /> *@
+                        @*     <label class="form-check-label" for="q-@i-c">C. @question.OptionC</label> *@
+                        @* </div> *@
+
+                        @* <div class="form-check"> *@
+                        @*     <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="D" id="q-@i-d" /> *@
+                        @*     <label class="form-check-label" for="q-@i-d">D. @question.OptionD</label> *@
+                        @* </div> *@
+
+                        @if (question.QuestionType == "MCQ")
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="A" id="q-@i-a" />
+                                <label class="form-check-label" for="q-@i-a">A. @question.OptionA</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="B" id="q-@i-b" />
+                                <label class="form-check-label" for="q-@i-b">B. @question.OptionB</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="C" id="q-@i-c" />
+                                <label class="form-check-label" for="q-@i-c">C. @question.OptionC</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="UserAnswers[@i].Answer" value="D" id="q-@i-d" />
+                                <label class="form-check-label" for="q-@i-d">D. @question.OptionD</label>
+                            </div>
+                        }
+                        else if (question.QuestionType == "Subjective")
+                        {
+                            <div class="form-group">
+                                <label for="subjective-@i">Answer:</label>
+                                <textarea class="form-control" name="UserAnswers[@i].Answer" id="subjective-@i" rows="3"></textarea>
+                            </div>
+                        }
+                        else if (question.QuestionType == "Numerical")
+                        {
+                            <div class="form-group">
+                                <label for="numerical-@i">Enter your answer:</label>
+                                <input type="number" step="any" class="form-control" name="UserAnswers[@i].Answer" id="numerical-@i" />
+                            </div>
+                        }
+
+
+                        <!-- Navigation Buttons -->
+                        <div class="mt-4">
+                            <button type="button" class="btn btn-secondary prev-btn" onclick="prevQuestion(@i)" style="display: @(i == 0 ? "none" : "inline-block");"><i class="bi bi-chevron-left"></i> Previous</button>
+                            <button type="button" class="btn btn-primary next-btn" onclick="nextQuestion(@i)" style="display: @(i == Model.Questions.Count - 1 ? "none" : "inline-block");">Next <i class="bi bi-chevron-right"></i> </button>
+                            <button type="submit" class="btn btn-success submit-btn" style="display: @(i == Model.Questions.Count - 1 ? "inline-block" : "none"); background-color:red"><i class="bi bi-check-square-fill"></i> Submit Quiz</button>
+                        </div>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentQuestion = 0;
+    const totalQuestions = @Model.Questions.Count;
+
+    function showQuestion(index) {
+        document.querySelectorAll('.question-container').forEach((q, i) => {
+            q.style.display = (i === index) ? "block" : "none";
+        });
+    }
+
+    function nextQuestion(index) {
+        if (index < totalQuestions - 1) {
+            currentQuestion++;
+            showQuestion(currentQuestion);
+        }
+    }
+
+    function prevQuestion(index) {
+        if (index > 0) {
+            currentQuestion--;
+            showQuestion(currentQuestion);
+        }
+    }
+</script>
+

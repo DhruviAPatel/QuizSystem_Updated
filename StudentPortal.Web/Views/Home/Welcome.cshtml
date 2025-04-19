@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hi-message {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-top: 15px;
+        font-family: "Lucida Handwriting", "Courier New", monospace;
+    }
+
+    .container {
+        display: flex;
+        width: 80%;
+        max-width: 1000px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin: 20px auto;
+    }
+
+    .welcome-text {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+        .welcome-text h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text p {
+            color: #555;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .welcome-text .cta {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+            .welcome-text .cta:hover {
+                background-color: #0056b3;
+            }
+
+    .image-section {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+    }
+
+        .image-section img {
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
+        }
+
+</style>
+
+<div class="hi-message">
+    Hi, @User.Identity.Name!
+</div>
+
+<div class="container">
+    <div class="welcome-text">
+        <h1 style="color:black; font-family:'Copperplate','Courier New', monospace;">Welcome to <br />Quiz System !</h1>
+        <br />
+        <p>Enhance your learning experience with interactive quizzes!</p>
+        <br />
+        <p style="color:red;font-family:'Brush Script MT'">All The Best 👍</p>
+
+    </div>
+    <div class="image-section">
+        <img src="https://media.istockphoto.com/id/1936478675/photo/book-library-concept-banner-with-characters-can-use-for-web-banner-infographics-hero-images.jpg?s=1024x1024&w=is&k=20&c=q-pZFqXToOyIT5ppDmp6pzAg0ygFiXrRcKmxfYjg72k=" alt="Digital World">
+    </div>
+
+</div>
+
