@@ -31,11 +31,11 @@
                             </button>
                         </form>
                         <a asp-action="ViewResults" asp-route-quizId="@quiz.QuizId" class="btn btn-sm btn-warning"><i class="bi bi-view-stacked"></i> View Results</a>
-
-                        @* <form asp-action="ViewResults" method="post"> *@
-                        @*     <input type="hidden" name="quizId" value="@quiz.QuizId" /> *@
-                        @*     <button type="submit" class="btn btn-sm btn-warning">View Results</button> *@
-                        @* </form> *@
+                        <a asp-action="ViewSuspiciousLogs"
+                           asp-route-quizId="@quiz.QuizId"
+                           class="btn btn-sm btn-warning"><i class="bi bi-flag-fill"></i> 
+                            View Logs
+                        </a>
                     </div>
 
                 </td>

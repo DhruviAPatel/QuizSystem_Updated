@@ -115,5 +115,82 @@
             showQuestion(currentQuestion);
         }
     }
+@* </script> *@
+@* <script> *@
+    let quizStartTime = Date.now();
+    let questionTimestamps = [];
+    let focusLostCount = 0;
+    let tabSwitchCount = 0;
+    let lastAnswerTime = Date.now();
+
+    // Detect tab switching
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            tabSwitchCount++;
+            logEvent("Tab switch");
+        }
+    });
+
+    // Detect focus lost
+    window.addEventListener("blur", () => {
+        focusLostCount++;
+        logEvent("Focus lost");
+    });
+
+    // Record when a question is answered
+    function recordAnswer(questionId) {
+        let currentTime = Date.now();
+        let timeTaken = (currentTime - lastAnswerTime) / 1000; // seconds
+        lastAnswerTime = currentTime;
+
+        questionTimestamps.push({
+            questionId: questionId,
+            timeTaken: timeTaken
+        });
+
+        if (timeTaken < 2) {
+            logEvent("Rapid answering", questionId, timeTaken);
+        }
+        if (timeTaken > 300) {
+            logEvent("Unusual time gap", questionId, timeTaken);
+        }
+    }
+
+    // Log event to server
+    function logEvent(type, questionId = null, duration = null) {
+        fetch("/Quiz/LogSuspiciousActivity", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                quizId: @Model.QuizId,
+                userId: '@User.Identity.Name',
+                eventType: type,
+                questionId: questionId,
+                timeTaken: duration
+            })
+        });
+    }
+
+    // Bind input fields (radio, textarea, input) to record answer
+    document.addEventListener("DOMContentLoaded", () => {
+        const allInputs = document.querySelectorAll("input[name^='UserAnswers'], textarea[name^='UserAnswers']");
+
+        allInputs.forEach(input => {
+            input.addEventListener("change", function () {
+                const nameAttr = this.getAttribute("name");
+                const match = nameAttr.match(/UserAnswers\[(\d+)\]/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const questionIdInput = document.querySelector(`input[name='UserAnswers[${index}].QuestionId']`);
+                    const questionId = parseInt(questionIdInput?.value);
+                    if (!isNaN(questionId)) {
+                        recordAnswer(questionId);
+                    }
+                }
+            });
+        });
+    });
 </script>
 

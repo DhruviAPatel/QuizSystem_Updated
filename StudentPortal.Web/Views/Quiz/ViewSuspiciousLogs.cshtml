@@ -1,0 +1,40 @@
+﻿@model List<StudentPortal.Web.Models.SuspiciousActivityLog>
+
+@{
+    ViewData["Title"] = "Suspicious Activity Logs";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No suspicious activity recorded for this quiz.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Event</th>
+                <th>Question ID</th>
+                <th>Time Taken (s)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.Timestamp.ToLocalTime().ToString("g")</td>
+                    <td>@log.UserId</td>
+                    <td>@log.EventType</td>
+                    <td>@(log.QuestionId?.ToString() ?? "—")</td>
+                    <td>@(log.TimeTaken?.ToString("F1") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -287,45 +287,6 @@ namespace StudentPortal.Web.Controllers
             return View("AddQuestion", model);
         }
 
-
-        //public IActionResult AddQuestion(QuestionViewModel model, string action)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        using (var connection = new SqlConnection(_connectionString))
-        //        {
-        //            connection.Open();
-        //            var query = "INSERT INTO Questions (QuizId,QuestionText, OptionA, OptionB, OptionC, OptionD, CorrectOption,QuestionType) VALUES (@QuizId,@QuestionText, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectOption,@QuestionType)";
-
-        //            using (var command = new SqlCommand(query, connection))
-        //            {
-        //                command.Parameters.AddWithValue("@QuizId", model.QuizId);
-        //                command.Parameters.AddWithValue("@QuestionText", model.QuestionText);
-        //                command.Parameters.AddWithValue("@OptionA", model.QuestionType == "MCQ" ? model.OptionA ?? (object)DBNull.Value : DBNull.Value);
-        //                command.Parameters.AddWithValue("@OptionB", model.QuestionType == "MCQ" ? model.OptionB ?? (object)DBNull.Value : DBNull.Value);
-        //                command.Parameters.AddWithValue("@OptionC", model.QuestionType == "MCQ" ? model.OptionC ?? (object)DBNull.Value : DBNull.Value);
-        //                command.Parameters.AddWithValue("@OptionD", model.QuestionType == "MCQ" ? model.OptionD ?? (object)DBNull.Value : DBNull.Value);
-        //                command.Parameters.AddWithValue("@CorrectOption", model.CorrectOption);
-        //                command.Parameters.AddWithValue("@QuestionType", model.QuestionType);
-
-        //                command.ExecuteNonQuery();
-        //            }
-        //        }
-
-        //                if (action == "Add Another")
-        //                {
-        //                    return RedirectToAction("AddQuestion", new { quizId = model.QuizId });
-        //                }
-        //                else if (action == "Finish")
-        //                {
-        //                    return RedirectToAction("QuizListForTeacher");
-        //                }
-
-
-        //    }
-        //    return View("AddQuestion", model);
-        //}
-
         [Authorize(Roles = "Teacher")]
         [HttpPost]
         public IActionResult DeleteQuiz(int quizId)
@@ -340,6 +301,13 @@ namespace StudentPortal.Web.Controllers
                 {
                     deleteResultsCommand.Parameters.AddWithValue("@QuizId", quizId);
                     deleteResultsCommand.ExecuteNonQuery();
+                }
+                // 2. Delete suspicious activity logs
+                var deleteLogsQuery = "DELETE FROM SuspiciousLogs WHERE QuizId = @QuizId";
+                using (var deleteLogsCommand = new SqlCommand(deleteLogsQuery, connection))
+                {
+                    deleteLogsCommand.Parameters.AddWithValue("@QuizId", quizId);
+                    deleteLogsCommand.ExecuteNonQuery();
                 }
 
                 // 2. Delete associated questions
@@ -362,30 +330,6 @@ namespace StudentPortal.Web.Controllers
             return RedirectToAction("QuizListForTeacher");
         }
 
-        //public IActionResult DeleteQuiz(int quizId)
-        //{
-        //    using (var connection = new SqlConnection(_connectionString))
-        //    {
-        //        connection.Open();
-
-        //        // First delete associated questions
-        //        var deleteQuestionsQuery = "DELETE FROM Questions WHERE QuizId = @QuizId";
-        //        using (var deleteQuestionsCommand = new SqlCommand(deleteQuestionsQuery, connection))
-        //        {
-        //            deleteQuestionsCommand.Parameters.AddWithValue("@QuizId", quizId);
-        //            deleteQuestionsCommand.ExecuteNonQuery();
-        //        }
-
-        //        // Then delete the quiz
-        //        var deleteQuizQuery = "DELETE FROM Quizzes WHERE QuizId = @QuizId";
-        //        using (var deleteQuizCommand = new SqlCommand(deleteQuizQuery, connection))
-        //        {
-        //            deleteQuizCommand.Parameters.AddWithValue("@QuizId", quizId);
-        //            deleteQuizCommand.ExecuteNonQuery();
-        //        }
-        //    }
-        //    return RedirectToAction("QuizListForTeacher");
-        //}
         private readonly IQuizService _quizService;
 
         public QuizController(IQuizService quizService)
@@ -472,6 +416,64 @@ namespace StudentPortal.Web.Controllers
 
 
 
+        [HttpPost]
+        public IActionResult LogSuspiciousActivity([FromBody] SuspiciousActivityLog log)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                string insertQuery = @"INSERT INTO SuspiciousLogs 
+            (QuizId, UserId, EventType, QuestionId, TimeTaken, Timestamp) 
+            VALUES (@QuizId, @UserId, @EventType, @QuestionId, @TimeTaken, @Timestamp)";
+
+                using (var command = new SqlCommand(insertQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@QuizId", log.QuizId);
+                    command.Parameters.AddWithValue("@UserId", log.UserId);
+                    command.Parameters.AddWithValue("@EventType", log.EventType ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@QuestionId", (object?)log.QuestionId ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@TimeTaken", (object?)log.TimeTaken ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Timestamp", DateTime.Now);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            return Ok();
+        }
+        [Authorize(Roles = "Teacher")]
+        [HttpGet]
+        public IActionResult ViewSuspiciousLogs(int quizId)
+        {
+            List<SuspiciousActivityLog> logs = new List<SuspiciousActivityLog>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var query = "SELECT * FROM SuspiciousLogs WHERE QuizId = @QuizId";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@QuizId", quizId);
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            logs.Add(new SuspiciousActivityLog
+                            {
+                                QuizId = (int)reader["QuizId"],
+                                UserId = reader["UserId"].ToString(),
+                                EventType = reader["EventType"].ToString(),
+                                QuestionId = reader["QuestionId"] as int?,
+                                TimeTaken = reader["TimeTaken"] as double?,
+                                Timestamp = (DateTime)reader["Timestamp"]
+                            });
+                        }
+                    }
+                }
+            }
+
+            return View(logs);
+        }
 
     }
 }
