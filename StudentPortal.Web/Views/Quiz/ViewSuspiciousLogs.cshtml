@@ -28,7 +28,8 @@ else
             @foreach (var log in Model)
             {
                 <tr>
-                    <td>@log.Timestamp.ToLocalTime().ToString("g")</td>
+                    @* <td>@log.Timestamp.ToLocalTime().ToString("g")</td> *@
+                    <td>@log.Timestamp</td>
                     <td>@log.UserId</td>
                     <td>@log.EventType</td>
                     <td>@(log.QuestionId?.ToString() ?? "—")</td>

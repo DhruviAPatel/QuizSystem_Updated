@@ -6,5 +6,6 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public ICollection<Question> Questions { get; set; }
+        public int TotalQuestions { get; set; }
     }
 }

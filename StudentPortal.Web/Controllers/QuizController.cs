@@ -132,11 +132,13 @@ namespace StudentPortal.Web.Controllers
 
                     // Update Quiz Details
                     var query = "UPDATE Quizzes SET Title = @Title, Description = @Description WHERE QuizId = @QuizId";
+
                     using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@QuizId", model.QuizId);
                         command.Parameters.AddWithValue("@Title", model.Title);
                         command.Parameters.AddWithValue("@Description", model.Description);
+
                         command.ExecuteNonQuery();
                     }
 
@@ -193,13 +195,14 @@ namespace StudentPortal.Web.Controllers
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var query = "INSERT INTO Quizzes (Title, Description) OUTPUT INSERTED.QuizId VALUES (@Title, @Description)";
+                    var query = "INSERT INTO Quizzes (Title, Description, TotalQuestions) OUTPUT INSERTED.QuizId VALUES (@Title, @Description, @TotalQuestions)";
 
                     using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", model.Title);
                         command.Parameters.AddWithValue("@Description", model.Description);
                         //command.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
+                        command.Parameters.AddWithValue("@TotalQuestions", model.TotalQuestions);
                         var quizId = (int)command.ExecuteScalar();
 
                         return RedirectToAction("AddQuestion", new { quizId });
@@ -348,6 +351,11 @@ namespace StudentPortal.Web.Controllers
             {
                 return NotFound();
             }
+            var random = new Random();
+            quiz.Questions = quiz.Questions
+                .OrderBy(q => random.Next())
+                .Take(quiz.TotalQuestions)
+                .ToList();
             return View(quiz);
         }
 
@@ -391,9 +399,10 @@ namespace StudentPortal.Web.Controllers
             var resultViewModel = new QuizResultViewModel
             {
                 QuizTitle = quiz.Title,
-                TotalQuestions = quiz.Questions.Count,
+                TotalQuestions = submission.UserAnswers.Count,
+
                 CorrectAnswers = score,
-                Score = (int)((score / (double)quiz.Questions.Count) * 100)
+                Score = (int)((score / (double)submission.UserAnswers.Count) * 100)
             };
  
 

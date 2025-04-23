@@ -28,6 +28,7 @@ namespace StudentPortal.Web.Services
                 QuizId = quiz.QuizId,
                 Title = quiz.Title,
                 Description = quiz.Description,
+                TotalQuestions = quiz.TotalQuestions,
                 Questions = quiz.Questions.Select(q => new QuestionViewModel
                 {
                     QuestionId = q.QuestionId,
