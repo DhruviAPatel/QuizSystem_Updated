@@ -1,4 +1,59 @@
 ﻿@model StudentPortal.Web.Models.QuestionViewModel
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    form {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    label.form-label {
+        font-weight: 600;
+    }
+
+    #mcq-options,
+    #numerical-range,
+    #correct-answer {
+        margin-top: 15px;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        background-color: #fdfdfd;
+    }
+
+    .input-group input {
+        margin-right: 10px;
+    }
+
+    .btn {
+        min-width: 140px;
+        font-weight: 600;
+    }
+
+    .btn + .btn {
+        margin-left: 10px;
+    }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+</style>
 
 <h2>Add Question to Quiz</h2>
 <form asp-action="AddQuestion" method="post">
@@ -34,22 +89,11 @@
     </div>
     </div>
 
-    @* <div class="mb-3"> *@
-    @*     <label for="CorrectOption" class="form-label">Correct Option (A/B/C/D)</label> *@
-    @*     <input type="text" class="form-control" id="CorrectOption" name="CorrectOption" required /> *@
-    @* </div> *@
     <div class="mb-3" id="correct-answer">
         <label for="CorrectOption" id="correctAnswerLabel" class="form-label">Correct Option (A/B/C/D)</label>
         <input type="text" class="form-control" id="CorrectOption" name="CorrectOption" required />
     </div>
 
-    @* <div id="numerical-range" class="mb-3" style="display: none;"> *@
-    @*     <label class="form-label">Acceptable Range (Numerical)</label> *@
-    @*     <div class="input-group"> *@
-    @*         <input type="number" step="any" asp-for="MinAcceptableValue" placeholder="Min" class="form-control" /> *@
-    @*         <input type="number" step="any" asp-for="MaxAcceptableValue" placeholder="Max" class="form-control" /> *@
-    @*     </div> *@
-    @* </div> *@
     <div id="numerical-range" class="mb-3">
         <label class="form-label">Acceptable Range (Numerical)</label>
         <div class="input-group">
@@ -67,21 +111,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // function toggleQuestionFields() {
-        //     const type = document.getElementById("QuestionType").value;
-
-        //     document.getElementById("mcq-options").style.display = (type === "MCQ") ? "block" : "none";
-        //     document.getElementById("numerical-range").style.display = (type === "Numerical") ? "block" : "none";
-        //     document.getElementById("correct-answer").style.display = (type !== "Numerical") ? "block" : "none";
-
-        //     Change label text dynamically based on question type
-        //     const label = document.getElementById("correctAnswerLabel");
-        //     if (type === "MCQ") {
-        //         label.textContent = "Correct Option (A/B/C/D)";
-        //     } else if (type === "Subjective") {
-        //         label.textContent = "Correct Answer Text";
-        //     }
-        // }
+        
         function toggleQuestionFields() {
             const type = document.getElementById("QuestionType").value;
             console.log("Selected Type:", type);

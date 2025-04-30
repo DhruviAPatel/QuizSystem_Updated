@@ -1,41 +1,69 @@
-﻿@model List<StudentPortal.Web.Models.SuspiciousActivityLog>
+﻿
+
+@model IEnumerable<SuspiciousActivityLog>
 
 @{
-    ViewData["Title"] = "Suspicious Activity Logs";
+    ViewBag.Title = "Suspicious Activity Logs";
 }
 
-<h2>@ViewData["Title"]</h2>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        No suspicious activity recorded for this quiz.
-    </div>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>User</th>
-                <th>Event</th>
-                <th>Question ID</th>
-                <th>Time Taken (s)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var log in Model)
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <h4 class="mb-0">Suspicious Activity Logs</h4>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
             {
-                <tr>
-                    @* <td>@log.Timestamp.ToLocalTime().ToString("g")</td> *@
-                    <td>@log.Timestamp</td>
-                    <td>@log.UserId</td>
-                    <td>@log.EventType</td>
-                    <td>@(log.QuestionId?.ToString() ?? "—")</td>
-                    <td>@(log.TimeTaken?.ToString("F1") ?? "—")</td>
-                </tr>
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-check-circle"></i> No suspicious activities recorded.
+                </div>
             }
-        </tbody>
-    </table>
-}
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Event</th>
+                                <th>Question ID</th>
+                                <th>Time Taken (s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var log in Model)
+                            {
+                                <tr>
+                                    
+                                    <td>@log.Timestamp</td>
+                                    <td>@log.UserId</td>
+                                    <td>
+                                        @if (log.EventType == "Tab switch")
+                                        {
+                                            <span class="badge bg-warning text-dark">Tab Switch</span>
+                                        }
+                                        else if (log.EventType == "Focus lost")
+                                        {
+                                            <span class="badge bg-secondary">Focus Lost</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">@log.EventType</span>
+                                        }
+                                    </td>
+                                    <td>@(log.QuestionId?.ToString() ?? "—")</td>
+                                    <td>@(log.TimeTaken?.ToString("F1") ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

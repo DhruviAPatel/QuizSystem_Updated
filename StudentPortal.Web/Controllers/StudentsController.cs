@@ -27,7 +27,6 @@ namespace StudentPortal.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(AddStudentViewModel viewModel)
         {
-            // Check for duplicate email
             var existingStudent = await dbContext.Students.FirstOrDefaultAsync(s => s.Email == viewModel.Email);
             if (existingStudent != null)
             {
@@ -36,7 +35,7 @@ namespace StudentPortal.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(viewModel); // Pass the model back to the view
+                return View(viewModel); 
             }
 
             var student = new Student
@@ -51,41 +50,6 @@ namespace StudentPortal.Web.Controllers
             await dbContext.SaveChangesAsync();
             return RedirectToAction("List", "Students");
         }
-
-
-        //public  async Task<IActionResult> Add(AddStudentViewModel viewModel)
-        //{
-        //    var existingStudent= await dbContext.Students.FirstOrDefaultAsync(s=>s.Email==viewModel.Email);
-        //    if (existingStudent !=null)
-        //    {
-        //        ModelState.AddModelError("Email", "This email is already registered");
-        //        return View(viewModel);
-        //    }
-
-
-        //    //if (string.IsNullOrWhiteSpace(viewModel.Phone) || !System.Text.RegularExpressions.Regex.IsMatch(viewModel.Phone, @"^\d{10}$"))
-        //    //{
-        //    //    ModelState.AddModelError("Phone", "The phone number must contain exactly 10 digits.");
-        //    //    return View(viewModel);
-        //    //}
-
-        //    var student = new Student
-        //    {
-        //        Name = viewModel.Name,
-        //        Email = viewModel.Email,
-        //        Phone = viewModel.Phone,
-        //        subscribed = viewModel.subscribed
-        //    };
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        await dbContext.Students.AddAsync(student);
-        //        await dbContext.SaveChangesAsync();
-        //        return RedirectToAction("List", "Students");
-        //    }
-
-        //    return View();
-        //}
 
         [HttpGet]
 

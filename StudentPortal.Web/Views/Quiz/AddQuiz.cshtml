@@ -1,5 +1,39 @@
 ﻿@model QuizViewModel
 
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .quiz-form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+        .quiz-form-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #007bff;
+            font-weight: 700;
+        }
+
+    label {
+        font-weight: 600;
+        margin-top: 15px;
+    }
+
+    .btn-primary {
+        font-weight: 600;
+        width: 100%;
+        margin-top: 25px;
+    }
+</style>
+
 <form method="post" asp-action="AddQuiz" class="form-group">
     <label>Title</label>
     <input type="text" name="Title" class="form-control" required />

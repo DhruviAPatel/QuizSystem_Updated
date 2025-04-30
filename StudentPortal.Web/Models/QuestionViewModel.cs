@@ -13,8 +13,8 @@ namespace StudentPortal.Web.Models
         public string? OptionD { get; set; }
         public string? CorrectOption { get; set; }
         public string QuestionType { get; set; } 
-        public double? MinAcceptableValue { get; set; } // For numerical
-        public double? MaxAcceptableValue { get; set; } // For numerical
+        public double? MinAcceptableValue { get; set; } 
+        public double? MaxAcceptableValue { get; set; } 
     }
 }
 
