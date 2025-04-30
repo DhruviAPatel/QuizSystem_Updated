@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [StudentPortalDb]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Database [StudentPortalDb]    Script Date: 30-Apr-25 10:25:13 PM ******/
 CREATE DATABASE [StudentPortalDb]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -75,7 +75,7 @@ ALTER DATABASE [StudentPortalDb] SET DELAYED_DURABILITY = DISABLED
 GO
 USE [StudentPortalDb]
 GO
-/****** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -89,7 +89,7 @@ CREATE TABLE [dbo].[__EFMigrationsHistory](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questions]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[Questions]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -112,7 +112,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[QuizResults]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[QuizResults]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -121,15 +121,16 @@ CREATE TABLE [dbo].[QuizResults](
 	[ResultId] [int] IDENTITY(1,1) NOT NULL,
 	[QuizId] [int] NULL,
 	[UserId] [int] NULL,
-	[Score] [int] NULL,
 	[TakenDate] [datetime] NULL,
+	[TotalScore] [float] NULL,
+	[PercentageScore] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[ResultId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Quizzes]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[Quizzes]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -146,7 +147,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Students]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[Students]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -163,7 +164,7 @@ CREATE TABLE [dbo].[Students](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[SuspiciousLogs]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[SuspiciousLogs]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -182,7 +183,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UsersData]    Script Date: 23-Apr-25 12:02:09 PM ******/
+/****** Object:  Table [dbo].[UsersData]    Script Date: 30-Apr-25 10:25:13 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
