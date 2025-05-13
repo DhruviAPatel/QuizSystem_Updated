@@ -14,8 +14,9 @@ namespace StudentPortal.Web.Models.Entities
 
         public int UserId { get; set; }
 
-        public int Score { get; set; }
+        public double TotalScore { get; set; }
 
+        public int PercentageScore { get; set; }
         public DateTime TakenDate { get; set; }
 
         public virtual Quiz Quiz { get; set; }

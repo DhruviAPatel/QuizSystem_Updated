@@ -10,7 +10,7 @@ namespace StudentPortal.Web.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public List<QuestionViewModel> Questions { get; set; } = new List<QuestionViewModel>();
-        //public string CreatedBy { get; set; }
+        
         public int TotalQuestions { get; set; }
 
     }

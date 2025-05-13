@@ -29,7 +29,7 @@ namespace StudentPortal.Web.Controllers
 
 
         
-        private readonly ApplicationDbContext _context; // Database Context
+        private readonly ApplicationDbContext _context; 
 
         public HomeController(ApplicationDbContext context)
         {
@@ -38,8 +38,8 @@ namespace StudentPortal.Web.Controllers
         [Authorize]
         public IActionResult Welcome()
         {
-            ViewBag.TotalStudents = _context.Students.Count();  // Fetch total students
-            ViewBag.TotalQuizzes = _context.Quizzes.Count();    // Fetch total quizzes
+            ViewBag.TotalStudents = _context.Students.Count();  
+            ViewBag.TotalQuizzes = _context.Quizzes.Count();    
 
             return View();
         }

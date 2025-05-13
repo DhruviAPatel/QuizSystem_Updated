@@ -45,91 +45,101 @@ namespace StudentPortal.Web.Services
                 }).ToList()
             };
         }
-
-        //public int EvaluateQuiz(int quizId, Dictionary<int, string> userAnswers)
-        //{
-        //    var correctAnswers = _context.Questions
-        //        .Where(q => q.QuizId == quizId)
-        //        .ToDictionary(q => q.QuestionId, q => q.CorrectOption);
-
-        //    int score = userAnswers.Count(answer =>
-        //        correctAnswers.ContainsKey(answer.Key) &&
-        //        correctAnswers[answer.Key].Equals(answer.Value, StringComparison.OrdinalIgnoreCase));
-
-        //    return score;
-        //}
-
-        public int EvaluateQuiz(int quizId, Dictionary<int, string> userAnswers)
+        public (double Score, int CorrectCount) EvaluateQuiz(int quizId, Dictionary<int, (string Answer, string Confidence)> userAnswers)
         {
             var questions = _context.Questions
                 .Where(q => q.QuizId == quizId)
                 .ToList();
 
-            int score = 0;
+            double score = 0;
+            int correctAnswers = 0;
 
             foreach (var question in questions)
             {
-                if (!userAnswers.TryGetValue(question.QuestionId, out string userAnswer) || string.IsNullOrWhiteSpace(userAnswer))
+                if (!userAnswers.TryGetValue(question.QuestionId, out var userResponse) || string.IsNullOrWhiteSpace(userResponse.Answer))
                     continue;
+
+                bool isCorrect = false;
 
                 switch (question.QuestionType)
                 {
                     case "MCQ":
-                        if (!string.IsNullOrEmpty(question.CorrectOption) &&
-                            question.CorrectOption.Equals(userAnswer, StringComparison.OrdinalIgnoreCase))
-                        {
-                            score++;
-                        }
+                        isCorrect = !string.IsNullOrEmpty(question.CorrectOption) &&
+                                    question.CorrectOption.Equals(userResponse.Answer, StringComparison.OrdinalIgnoreCase);
                         break;
 
                     case "Numerical":
-                        if (double.TryParse(userAnswer, out double userValue) &&
+                        if (double.TryParse(userResponse.Answer, out double userValue) &&
                             question.MinAcceptableValue.HasValue &&
                             question.MaxAcceptableValue.HasValue)
                         {
-                            if (userValue >= question.MinAcceptableValue.Value &&
-                                userValue <= question.MaxAcceptableValue.Value)
-                            {
-                                score++;
-                            }
+                            isCorrect = userValue >= question.MinAcceptableValue.Value &&
+                                        userValue <= question.MaxAcceptableValue.Value;
                         }
                         break;
 
                     case "Subjective":
-                        string normalizedUserAnswer = NormalizeText(userAnswer);
+                        string normalizedUserAnswer = NormalizeText(userResponse.Answer);
                         string normalizedCorrectAnswer = NormalizeText(question.CorrectOption);
 
-                        // Option 1: Exact normalized match
                         if (normalizedUserAnswer == normalizedCorrectAnswer)
                         {
-                            score++;
+                            isCorrect = true;
                         }
-
-                        // Option 2: Partial keyword-based match (if full match fails)
                         else
                         {
                             var keywords = normalizedCorrectAnswer.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                             int matchedKeywords = keywords.Count(k => normalizedUserAnswer.Contains(k));
                             double matchPercentage = (double)matchedKeywords / keywords.Length;
 
-                            if (matchPercentage >= 0.7) // 70% keywords matched
+                            if (matchPercentage >= 0.7)
                             {
-                                score++;
+                                isCorrect = true;
                             }
                         }
                         break;
                 }
+
+                double scoreChange = 0;
+                string confidence = userResponse.Confidence?.ToLower() ?? "low";
+
+                if (isCorrect)
+                {
+                    correctAnswers++;
+                    score++;
+                    scoreChange = confidence switch
+                    {
+                        "high" => 1.0,
+                        "medium" => 0.7,
+                        "low" => 0.5,
+                        _ => 0.5
+                    };
+                }
+                else
+                {
+                    scoreChange = confidence switch
+                    {
+                        "high" => -0.5,
+                        "medium" => -0.3,
+                        "low" => -0.1,
+                        _ => 0
+                    };
+                }
+                
+                score += scoreChange;
+
+                if (score < 0)
+                    score = 0;
             }
 
-            return score;
+            return (score, correctAnswers);
         }
 
-        // Helper function to normalize string
+
         private string NormalizeText(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
-            // Lowercase + trim + remove extra spaces
             return string.Join(" ", input
                 .ToLower()
                 .Trim()
@@ -137,17 +147,18 @@ namespace StudentPortal.Web.Services
         }
 
 
-        public void SaveQuizResult(int quizId, int userId, int score)
+        public void SaveQuizResult(int quizId, int userId, double TotalScore,int PercentageScore)
         {
             var quizResult = new QuizResult
             {
                 QuizId = quizId,
                 UserId = userId,
-                Score = score,
+                TotalScore = TotalScore,
+                PercentageScore=PercentageScore,
                 TakenDate = DateTime.UtcNow
             };
 
-            _context.QuizResults.Add(quizResult); // Assuming _context is your ApplicationDbContext
+            _context.QuizResults.Add(quizResult); 
             _context.SaveChanges();
         }
 
@@ -158,7 +169,8 @@ namespace StudentPortal.Web.Services
                 .Select(qr => new QuizResultViewModel
                 {
                     StudentId = qr.UserId,
-                    Score = qr.Score,
+                    TotalScore = qr.TotalScore,
+                    PercentageScore = qr.PercentageScore,
                     TakenDate = qr.TakenDate
                 })
                 .ToList();

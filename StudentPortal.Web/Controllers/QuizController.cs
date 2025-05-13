@@ -130,7 +130,6 @@ namespace StudentPortal.Web.Controllers
                 {
                     connection.Open();
 
-                    // Update Quiz Details
                     var query = "UPDATE Quizzes SET Title = @Title, Description = @Description WHERE QuizId = @QuizId";
 
                     using (var command = new SqlCommand(query, connection))
@@ -142,7 +141,6 @@ namespace StudentPortal.Web.Controllers
                         command.ExecuteNonQuery();
                     }
 
-                    // Update Questions
                     foreach (var question in model.Questions)
                     {
                         var updateQuestionQuery = @"UPDATE Questions 
@@ -244,13 +242,11 @@ namespace StudentPortal.Web.Controllers
                         command.Parameters.AddWithValue("@QuizId", model.QuizId);
                         command.Parameters.AddWithValue("@QuestionText", model.QuestionText);
 
-                        // MCQ Options
                         command.Parameters.AddWithValue("@OptionA", model.QuestionType == "MCQ" ? (object?)model.OptionA ?? DBNull.Value : DBNull.Value);
                         command.Parameters.AddWithValue("@OptionB", model.QuestionType == "MCQ" ? (object?)model.OptionB ?? DBNull.Value : DBNull.Value);
                         command.Parameters.AddWithValue("@OptionC", model.QuestionType == "MCQ" ? (object?)model.OptionC ?? DBNull.Value : DBNull.Value);
                         command.Parameters.AddWithValue("@OptionD", model.QuestionType == "MCQ" ? (object?)model.OptionD ?? DBNull.Value : DBNull.Value);
 
-                        //command.Parameters.AddWithValue("@CorrectOption", model.CorrectOption);
                         command.Parameters.AddWithValue("@CorrectOption",
                     model.QuestionType == "Numerical" ? (object)DBNull.Value :
                     !string.IsNullOrEmpty(model.CorrectOption) ? model.CorrectOption : (object)DBNull.Value);
@@ -275,7 +271,6 @@ namespace StudentPortal.Web.Controllers
                     }
                 }
 
-                // Redirect based on action
                 if (action == "Add Another")
                 {
                     return RedirectToAction("AddQuestion", new { quizId = model.QuizId });
@@ -285,8 +280,6 @@ namespace StudentPortal.Web.Controllers
                     return RedirectToAction("QuizListForTeacher");
                 }
             }
-
-            // If model state is invalid, redisplay form with validation messages
             return View("AddQuestion", model);
         }
 
@@ -298,14 +291,13 @@ namespace StudentPortal.Web.Controllers
             {
                 connection.Open();
 
-                // 1. Delete related quiz results
                 var deleteResultsQuery = "DELETE FROM QuizResults WHERE QuizId = @QuizId";
                 using (var deleteResultsCommand = new SqlCommand(deleteResultsQuery, connection))
                 {
                     deleteResultsCommand.Parameters.AddWithValue("@QuizId", quizId);
                     deleteResultsCommand.ExecuteNonQuery();
                 }
-                // 2. Delete suspicious activity logs
+                
                 var deleteLogsQuery = "DELETE FROM SuspiciousLogs WHERE QuizId = @QuizId";
                 using (var deleteLogsCommand = new SqlCommand(deleteLogsQuery, connection))
                 {
@@ -313,7 +305,6 @@ namespace StudentPortal.Web.Controllers
                     deleteLogsCommand.ExecuteNonQuery();
                 }
 
-                // 2. Delete associated questions
                 var deleteQuestionsQuery = "DELETE FROM Questions WHERE QuizId = @QuizId";
                 using (var deleteQuestionsCommand = new SqlCommand(deleteQuestionsQuery, connection))
                 {
@@ -321,7 +312,6 @@ namespace StudentPortal.Web.Controllers
                     deleteQuestionsCommand.ExecuteNonQuery();
                 }
 
-                // 3. Delete the quiz
                 var deleteQuizQuery = "DELETE FROM Quizzes WHERE QuizId = @QuizId";
                 using (var deleteQuizCommand = new SqlCommand(deleteQuizQuery, connection))
                 {
@@ -361,54 +351,54 @@ namespace StudentPortal.Web.Controllers
 
 
         [HttpPost]
+        [HttpPost]
         public IActionResult SubmitQuiz(QuizSubmissionViewModel submission)
         {
-            // Debugging output to verify received data
-            Console.WriteLine($"QuizId: {submission.QuizId}");
-            foreach (var answer in submission.UserAnswers)
-            {
-                Console.WriteLine($"QuestionId: {answer.QuestionId}, Answer: {answer.Answer}");
-            }
-
             if (submission == null || submission.UserAnswers == null || !submission.UserAnswers.Any())
             {
                 return BadRequest("Invalid quiz submission.");
             }
 
-            // Prepare user answers dictionary for evaluation
+            Console.WriteLine($"QuizId: {submission.QuizId}");
+            foreach (var answer in submission.UserAnswers)
+            {
+                Console.WriteLine($"QuestionId: {answer.QuestionId}, Answer: {answer.Answer}, Confidence: {answer.Confidence}");
+            }
+
             var userAnswers = submission.UserAnswers
-                .ToDictionary(ua => ua.QuestionId, ua => ua.Answer);
+                .ToDictionary(ua => ua.QuestionId, ua => (Answer: ua.Answer, Confidence: ua.Confidence));
 
-            // Evaluate the quiz and calculate the score
-            int score = _quizService.EvaluateQuiz(submission.QuizId, userAnswers);
+            var (totalScore, correctAnswersCount) = _quizService.EvaluateQuiz(submission.QuizId, userAnswers);
 
-            // Get quiz details for result view
             var quiz = _quizService.GetQuizById(submission.QuizId);
             if (quiz == null)
             {
                 return NotFound("Quiz not found.");
             }
+
             int userId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
+            int totalQuestions = submission.UserAnswers.Count;
 
-            _quizService.SaveQuizResult(submission.QuizId, userId, score);
+            int percentageScore = totalQuestions > 0
+                ? (int)((correctAnswersCount / (double)totalQuestions) * 100)
+                : 0;
 
-            //_quizService.SaveQuizResult(submission.QuizId, submission.UserId, score);
+            _quizService.SaveQuizResult(submission.QuizId, userId, totalScore,percentageScore);
 
-            // Prepare the result view model
             var resultViewModel = new QuizResultViewModel
             {
                 QuizTitle = quiz.Title,
-                TotalQuestions = submission.UserAnswers.Count,
-
-                CorrectAnswers = score,
-                Score = (int)((score / (double)submission.UserAnswers.Count) * 100)
+                TotalQuestions = totalQuestions,
+                CorrectAnswers = correctAnswersCount,
+                TotalScore=totalScore,
+                PercentageScore = percentageScore
             };
- 
 
-            // Return the result view with the model
             return View("QuizResult", resultViewModel);
         }
+
+
 
         [HttpGet]
         public IActionResult ViewResults(int quizId)

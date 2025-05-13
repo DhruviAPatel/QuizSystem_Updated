@@ -1,127 +1,102 @@
 ﻿
-@model StudentPortal.Web.Models.QuizViewModel
+
+                @model StudentPortal.Web.Models.QuizViewModel
 
 <div class="container mt-5">
     <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-            <h2 class="text-center">Edit Quiz</h2>
+        <div class="card-header bg-primary text-white text-center">
+            <h2>Edit Quiz</h2>
         </div>
+
         <div class="card-body">
             <form asp-action="UpdateQuiz" method="post">
                 <input type="hidden" name="QuizId" value="@Model.QuizId" />
 
                 <!-- Quiz Title -->
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Quiz Title</label>
-                    <input type="text" name="Title" value="@Model.Title" class="form-control" required />
+                    <label for="Title" class="form-label fw-semibold">Quiz Title</label>
+                    <input type="text" name="Title" id="Title" value="@Model.Title" class="form-control" required />
                 </div>
 
                 <!-- Quiz Description -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Description</label>
-                    <textarea name="Description" class="form-control" rows="3" required>@Model.Description</textarea>
+                <div class="mb-4">
+                    <label for="Description" class="form-label fw-semibold">Description</label>
+                    <textarea name="Description" id="Description" class="form-control" rows="3" required>@Model.Description</textarea>
                 </div>
 
-
-                <h3 class="mt-4">Edit Questions</h3>
+                <h4 class="mt-5 text-primary">Edit Questions</h4>
                 <hr />
 
                 @for (int i = 0; i < Model.Questions.Count; i++)
                 {
-                    <div class="card mb-4">
+                    var question = Model.Questions[i];
+
+                    <div class="card mb-4 border-secondary">
+                        <div class="card-header bg-light">
+                            <strong>Question @(i + 1) — @question.QuestionType</strong>
+                        </div>
                         <div class="card-body">
-                            <input type="hidden" name="Questions[@i].QuestionId" value="@Model.Questions[i].QuestionId" />
-                            <input type="hidden" name="Questions[@i].QuestionType" value="@Model.Questions[i].QuestionType" />
+                            <input type="hidden" name="Questions[@i].QuestionId" value="@question.QuestionId" />
+                            <input type="hidden" name="Questions[@i].QuestionType" value="@question.QuestionType" />
 
-
-                            <!-- Question Text -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Question</label>
-                                <input type="text" name="Questions[@i].QuestionText" value="@Model.Questions[i].QuestionText" class="form-control" required />
+                                <label class="form-label fw-semibold">Question Text</label>
+                                <input type="text" name="Questions[@i].QuestionText" value="@question.QuestionText" class="form-control" required />
                             </div>
 
-                            @* <!-- Options --> *@
-                            @* <div class="row"> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label class="form-label">Option A</label> *@
-                            @*         <input type="text" name="Questions[@i].OptionA" value="@Model.Questions[i].OptionA" class="form-control" required /> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label class="form-label">Option B</label> *@
-                            @*         <input type="text" name="Questions[@i].OptionB" value="@Model.Questions[i].OptionB" class="form-control" required /> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label class="form-label">Option C</label> *@
-                            @*         <input type="text" name="Questions[@i].OptionC" value="@Model.Questions[i].OptionC" class="form-control" required /> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label class="form-label">Option D</label> *@
-                            @*         <input type="text" name="Questions[@i].OptionD" value="@Model.Questions[i].OptionD" class="form-control" required /> *@
-                            @*     </div> *@
-                            @* </div> *@
-
-                            @* <!-- Correct Option --> *@
-                            @* <div class="mb-3"> *@
-                            @*     <label class="form-label fw-bold">Correct Option</label> *@
-                            @*     <select name="Questions[@i].CorrectOption" class="form-select" required> *@
-                            @*         <option value="A" selected="@(Model.Questions[i].CorrectOption == "A" ? "selected" : null)">A</option> *@
-                            @*         <option value="B" selected="@(Model.Questions[i].CorrectOption == "B" ? "selected" : null)">B</option> *@
-                            @*         <option value="C" selected="@(Model.Questions[i].CorrectOption == "C" ? "selected" : null)">C</option> *@
-                            @*         <option value="D" selected="@(Model.Questions[i].CorrectOption == "D" ? "selected" : null)">D</option> *@
-                            @*     </select> *@
-                            @* </div> *@
-
-
                             <!-- MCQ Options -->
-                            <div class="mcq-section" data-index="@i" style="display: @(Model.Questions[i].QuestionType == "MCQ" ? "block" : "none")">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                            <div class="mcq-section" data-index="@i" style="display: @(question.QuestionType == "MCQ" ? "block" : "none")">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
                                         <label class="form-label">Option A</label>
-                                        <input type="text" name="Questions[@i].OptionA" value="@Model.Questions[i].OptionA" class="form-control" />
+                                        <input type="text" name="Questions[@i].OptionA" value="@question.OptionA" class="form-control" />
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
                                         <label class="form-label">Option B</label>
-                                        <input type="text" name="Questions[@i].OptionB" value="@Model.Questions[i].OptionB" class="form-control" />
+                                        <input type="text" name="Questions[@i].OptionB" value="@question.OptionB" class="form-control" />
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
                                         <label class="form-label">Option C</label>
-                                        <input type="text" name="Questions[@i].OptionC" value="@Model.Questions[i].OptionC" class="form-control" />
+                                        <input type="text" name="Questions[@i].OptionC" value="@question.OptionC" class="form-control" />
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
                                         <label class="form-label">Option D</label>
-                                        <input type="text" name="Questions[@i].OptionD" value="@Model.Questions[i].OptionD" class="form-control" />
+                                        <input type="text" name="Questions[@i].OptionD" value="@question.OptionD" class="form-control" />
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Numerical Range -->
-                            <div class="numerical-section" data-index="@i" style="display: @(Model.Questions[i].QuestionType == "Numerical" ? "block" : "none")">
-                                <div class="mb-3">
-                                    <label class="form-label">Min Acceptable Value</label>
-                                    <input type="number" step="any" name="Questions[@i].MinAcceptableValue" value="@Model.Questions[i].MinAcceptableValue" class="form-control" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Max Acceptable Value</label>
-                                    <input type="number" step="any" name="Questions[@i].MaxAcceptableValue" value="@Model.Questions[i].MaxAcceptableValue" class="form-control" />
+                            <div class="numerical-section" data-index="@i" style="display: @(question.QuestionType == "Numerical" ? "block" : "none")">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Min Acceptable Value</label>
+                                        <input type="number" step="any" name="Questions[@i].MinAcceptableValue" value="@question.MinAcceptableValue" class="form-control" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Max Acceptable Value</label>
+                                        <input type="number" step="any" name="Questions[@i].MaxAcceptableValue" value="@question.MaxAcceptableValue" class="form-control" />
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Correct Answer -->
-                            <div class="correct-answer-section" data-index="@i" style="display: @(Model.Questions[i].QuestionType == "Subjective" || Model.Questions[i].QuestionType == "MCQ" ? "block" : "none")">
+                            <!-- Correct Answer Field -->
+                            <div class="correct-answer-section" data-index="@i" style="display: @(question.QuestionType == "Subjective" || question.QuestionType == "MCQ" ? "block" : "none")">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        @(Model.Questions[i].QuestionType == "MCQ" ? "Correct Option (A/B/C/D)" : "Correct Answer Text")
+                                    <label class="form-label fw-semibold">
+                                        @(question.QuestionType == "MCQ" ? "Correct Option (A/B/C/D)" : "Correct Answer Text")
                                     </label>
-                                    <input type="text" name="Questions[@i].CorrectOption" value="@Model.Questions[i].CorrectOption" class="form-control" />
+                                    <input type="text" name="Questions[@i].CorrectOption" value="@question.CorrectOption" class="form-control" />
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 }
 
-                <div class="text-center">
-                    <button type="submit" class="btn btn-success btn-lg px-4"><i class="bi bi-magic"></i> Update Quiz</button>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg px-4">
+                        <i class="bi bi-arrow-repeat"></i> Update Quiz
+                    </button>
                 </div>
             </form>
         </div>
@@ -134,15 +109,13 @@
             const questions = @Html.Raw(Json.Serialize(Model.Questions));
 
             questions.forEach((q, index) => {
-                const type = q.questionType;
-
                 const mcqSection = document.querySelector(`.mcq-section[data-index="${index}"]`);
                 const numericalSection = document.querySelector(`.numerical-section[data-index="${index}"]`);
                 const correctAnswerSection = document.querySelector(`.correct-answer-section[data-index="${index}"]`);
 
-                mcqSection.style.display = type === "MCQ" ? "block" : "none";
-                numericalSection.style.display = type === "Numerical" ? "block" : "none";
-                correctAnswerSection.style.display = type === "Subjective" || type === "MCQ" ? "block" : "none";
+                mcqSection.style.display = q.questionType === "MCQ" ? "block" : "none";
+                numericalSection.style.display = q.questionType === "Numerical" ? "block" : "none";
+                correctAnswerSection.style.display = (q.questionType === "Subjective" || q.questionType === "MCQ") ? "block" : "none";
             });
         });
     </script>

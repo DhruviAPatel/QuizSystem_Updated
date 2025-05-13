@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using StudentPortal.Web.Data;
 using StudentPortal.Web.Models;
 using StudentPortal.Web.Models.Entities;
 using System.Security.Claims;
@@ -8,10 +9,11 @@ using System.Security.Claims;
 public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
-
-    public AccountController(IAccountService accountService)
+    private readonly ApplicationDbContext _context;
+    public AccountController(IAccountService accountService, ApplicationDbContext context)
     {
         _accountService = accountService;
+        _context = context;
     }
 
     [HttpGet]
@@ -68,6 +70,36 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
+        if (model.Role == "Student")
+        {
+            bool emailExistsInStudentTable = _context.Students.Any(s => s.Email == model.Email);
+            if (!emailExistsInStudentTable)
+            {
+                ViewBag.ActiveTab = "register";
+                ModelState.AddModelError("Email", "This email is not registered.");
+                return View("~/Views/Home/Index.cshtml", new IndexViewModel
+                {
+                    LoginModel = new LoginViewModel(),
+                    RegisterModel = model
+                });
+            }
+        }
+        if (model.Role == "Teacher")
+        {
+            const string teacherPin = "12345"; 
+
+            if (model.Pin != teacherPin)
+            {
+                ViewBag.ActiveTab = "register";
+                ModelState.AddModelError(string.Empty, "Enter valid Teacher PIN.");
+
+                return View("~/Views/Home/Index.cshtml", new IndexViewModel
+                {
+                    LoginModel = new LoginViewModel(),
+                    RegisterModel = model
+                });
+            }
+        }
         if (!ModelState.IsValid)
         {
 
@@ -80,12 +112,15 @@ public class AccountController : Controller
             });
 
         }
+        
+
 
         if (await _accountService.IsEmailExistsAsync(model.Email))
         {
+            ViewBag.ActiveTab = "register";
             ModelState.AddModelError(string.Empty, "Email ID already exists.");
 
-            ViewBag.ActiveTab = "register";
+            
 
             return View("~/Views/Home/Index.cshtml", new IndexViewModel
             {
@@ -97,8 +132,9 @@ public class AccountController : Controller
         var user = await _accountService.RegisterUserAsync(model);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "Registration failed. Try again.");
             ViewBag.ActiveTab = "register";
+            ModelState.AddModelError(string.Empty, "Registration failed. Try again.");
+            
             var viewModel = new IndexViewModel
             {
                 LoginModel = new LoginViewModel(),

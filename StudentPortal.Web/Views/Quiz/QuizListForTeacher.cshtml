@@ -1,45 +1,59 @@
-﻿@model IEnumerable<QuizViewModel>
+﻿
 
-<h2>Manage Quizzes</h2>
-<a asp-action="AddQuiz" class="btn btn-primary mb-3"><i class="bi bi-plus"></i> Add New Quiz</a>
+@model IEnumerable<QuizViewModel>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var quiz in Model)
-        {
-            <tr>
-                <td>@quiz.Title</td>
-                <td>@quiz.Description</td>
-                <td>
-                    <div class="d-flex gap-2">
-                        <form asp-action="EditQuiz" method="post">
-                            <input type="hidden" name="quizId" value="@quiz.QuizId" />
-                            <button type="submit" class="btn btn-sm btn-warning" style="background-color:green"><i class="bi bi-pencil-fill"></i> Edit</button>
-                        </form>
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="bi bi-clipboard-data"></i> Manage Quizzes</h3>
+            <a asp-action="AddQuiz" class="btn btn-outline-light">
+                <i class="bi bi-plus-circle"></i> Add New Quiz
+            </a>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var quiz in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@quiz.Title</td>
+                            <td>@quiz.Description</td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                    <form asp-action="EditQuiz" method="post" class="d-inline">
+                                        <input type="hidden" name="quizId" value="@quiz.QuizId" />
+                                        <button type="submit" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil-fill"></i> Edit
+                                        </button>
+                                    </form>
 
-                        <form asp-action="DeleteQuiz" method="post">
-                            <input type="hidden" name="quizId" value="@quiz.QuizId" />
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this quiz?');">
-                                <i class="bi bi-trash3-fill"></i> Delete
-                            </button>
-                        </form>
-                        <a asp-action="ViewResults" asp-route-quizId="@quiz.QuizId" class="btn btn-sm btn-warning"><i class="bi bi-view-stacked"></i> View Results</a>
-                        <a asp-action="ViewSuspiciousLogs"
-                           asp-route-quizId="@quiz.QuizId"
-                           class="btn btn-sm btn-warning"><i class="bi bi-flag-fill"></i> 
-                            View Logs
-                        </a>
-                    </div>
+                                    <form asp-action="DeleteQuiz" method="post" class="d-inline">
+                                        <input type="hidden" name="quizId" value="@quiz.QuizId" />
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this quiz?');">
+                                            <i class="bi bi-trash3-fill"></i> Delete
+                                        </button>
+                                    </form>
 
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                                    <a asp-action="ViewResults" asp-route-quizId="@quiz.QuizId" class="btn btn-sm btn-info">
+                                        <i class="bi bi-bar-chart-line-fill"></i> Results
+                                    </a>
+
+                                    <a asp-action="ViewSuspiciousLogs" asp-route-quizId="@quiz.QuizId" class="btn btn-sm btn-secondary">
+                                        <i class="bi bi-flag-fill"></i> Logs
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

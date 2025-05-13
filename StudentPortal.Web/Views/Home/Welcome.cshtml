@@ -1,33 +1,49 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Welcome";
 }
 
 <style>
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f4f4;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #121212;
         margin: 0;
         padding: 0;
+        color: #e0e0e0;
     }
 
     .hi-message {
         text-align: center;
         font-size: 2.5rem;
         font-weight: bold;
-        color: #007bff;
+        color: #00bcd4;
         margin-top: 15px;
-        font-family: "Lucida Handwriting", "Courier New", monospace;
+        font-family: "Lucida Handwriting", cursive;
+        animation: fadeInUp 1s ease-in-out;
     }
 
     .container {
         display: flex;
-        width: 80%;
-        max-width: 1000px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 85%;
+        max-width: 1100px;
+        background: #1e1e1e;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
         overflow: hidden;
-        margin: 20px auto;
+        margin: 30px auto;
+        animation: fadeInUp 1.2s ease-in-out;
     }
 
     .welcome-text {
@@ -39,31 +55,33 @@
     }
 
         .welcome-text h1 {
-            color: #333;
-            font-size: 2rem;
-            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 2.3rem;
+            margin-bottom: 15px;
+            font-family: 'Copperplate', 'Courier New', monospace;
         }
 
         .welcome-text p {
-            color: #555;
+            color: #bbbbbb;
             font-size: 1.2rem;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .welcome-text .cta {
-            margin-top: 20px;
+            margin-top: 25px;
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
+            padding: 12px 24px;
+            background-color: #00bcd4;
+            color: #121212;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 1.1rem;
-            transition: 0.3s;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
         }
 
             .welcome-text .cta:hover {
-                background-color: #0056b3;
+                background-color: #008ba3;
             }
 
     .image-section {
@@ -71,15 +89,15 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: white;
+        background-color: #1e1e1e;
     }
 
         .image-section img {
             max-width: 100%;
-            max-height: 100vh;
+            height: auto;
             object-fit: contain;
+            filter: brightness(0.9);
         }
-
 </style>
 
 <div class="hi-message">
@@ -88,16 +106,15 @@
 
 <div class="container">
     <div class="welcome-text">
-        <h1 style="color:black; font-family:'Copperplate','Courier New', monospace;">Welcome to <br />Quiz System !</h1>
-        <br />
+        <h1>Welcome to <br />Quiz System!</h1>
         <p>Enhance your learning experience with interactive quizzes!</p>
-        <br />
-        <p style="color:red;font-family:'Brush Script MT'">All The Best 👍</p>
-
+        <p style="color:#ff9800; font-family:'Brush Script MT', cursive;">All The Best 👍</p>
+        
     </div>
+
     <div class="image-section">
         <img src="https://media.istockphoto.com/id/1936478675/photo/book-library-concept-banner-with-characters-can-use-for-web-banner-infographics-hero-images.jpg?s=1024x1024&w=is&k=20&c=q-pZFqXToOyIT5ppDmp6pzAg0ygFiXrRcKmxfYjg72k=" alt="Digital World">
     </div>
-
 </div>
+
 
